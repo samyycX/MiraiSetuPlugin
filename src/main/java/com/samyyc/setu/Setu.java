@@ -20,7 +20,7 @@ public final class Setu extends JavaPlugin {
     public static final Setu INSTANCE = new Setu();
 
     private Setu() {
-        super(new JvmPluginDescriptionBuilder("com.samyyc.setu", "1.0.0")
+        super(new JvmPluginDescriptionBuilder("com.samyyc.setu", "1.1.0")
                 .name("Setu")
                 .info("通过色图API获取色图")
                 .author("samyyc")
