@@ -1,15 +1,10 @@
 package com.samyyc.setu.listener;
 
-import com.samyyc.setu.Setu;
 import com.samyyc.setu.util.MessageUtil;
-import com.samyyc.setu.util.SetuUtil;
-import com.samyyc.setu.vo.SetuData;
-import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,9 +19,9 @@ public class SetuListener {
                     PlainText plainText = (PlainText) messages.get(0);
                     String message = plainText.contentToString();
                     if (message.startsWith("色图")) {
-                        MessageUtil.sendSetu(false, event.getSubject(), message);
+                        event.getSubject().sendMessage(MessageUtil.getSetuMessageFromApi(false, event.getSubject(), message));
                     } else if (message.startsWith("r18色图")) {
-                        MessageUtil.sendSetu(true, event.getSubject(), message);
+                        event.getSubject().sendMessage(MessageUtil.getSetuMessageFromApi(true, event.getSubject(), message));
                     }
                 }
             }

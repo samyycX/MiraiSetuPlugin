@@ -6,6 +6,8 @@ import com.samyyc.setu.util.ConfigUtil;
 import com.samyyc.setu.util.MessageUtil;
 import com.samyyc.setu.util.SetuUtil;
 import com.samyyc.setu.vo.SetuData;
+import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.Contact;
@@ -31,7 +33,6 @@ public final class Setu extends JavaPlugin {
         if (!getConfigFolder().exists()) {
             getConfigFolder().mkdir();
         }
-        System.out.println(getConfigFolder());
         File file = new File(getConfigFolder(), "config.properties");
         if (!file.exists()) {
             try {
@@ -60,12 +61,10 @@ public final class Setu extends JavaPlugin {
             SetuData data = null;
             if (split.length > 1) {
                 String[] tags = Arrays.stream(split).skip(1).toArray(String[]::new);
-                System.out.println(Arrays.toString(tags));
                 data = SetuUtil.getSetu(true, tags);
             } else {
                 data = SetuUtil.getSetu(true);
             }
-            System.out.println(data);
         }
     }
 }

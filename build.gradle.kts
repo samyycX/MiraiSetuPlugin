@@ -9,6 +9,11 @@ plugins {
 group = "com.samyyc.setu"
 version = "1.0.0"
 
+configure<JavaPluginExtension> {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 repositories {
     maven("https://maven.aliyun.com/repository/public")
     mavenCentral()

@@ -26,11 +26,11 @@ public class SetuUrl {
     }
 
     public String getUrl() {
-        if (!original.equals("")) return original;
-        if (!regular.equals("")) return regular;
-        if (!small.equals("")) return small;
-        if (!thumb.equals("")) return thumb;
-        if (!mini.equals("")) return mini;
+        if (original != null) return original;
+        if (regular != null) return regular;
+        if (small != null) return small;
+        if (thumb != null) return thumb;
+        if (mini != null) return mini;
         return null;
     }
 
