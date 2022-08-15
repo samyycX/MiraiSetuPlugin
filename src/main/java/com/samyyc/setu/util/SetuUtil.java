@@ -11,6 +11,7 @@ import net.mamoe.mirai.utils.ExternalResource;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -30,6 +31,10 @@ public class SetuUtil {
     public static String apiUrl = "http://api.lolicon.app/setu/v2";
 
     public static Image getImage(SetuData data, Contact contact) {
+        return ExternalResource.uploadAsImage(getImageFile(data), contact);
+    }
+
+    public static File getImageFile(SetuData data) {
         if (data != null) {
             try {
                 String url = data.getUrl();
@@ -40,7 +45,7 @@ public class SetuUtil {
                         10000,
                         10000
                 );
-                return ExternalResource.uploadAsImage(file, contact);
+                return file;
             } catch (IOException e) {
                 // this should never happen :(
                 return null;
@@ -52,37 +57,52 @@ public class SetuUtil {
 
     public static SetuData getSetu(boolean r18) {
         HttpPost post = new HttpPost(apiUrl);
-        post.setEntity(serializeHttpEntity(r18));
+        post.setEntity(HttpUtil.serializeHttpEntity(r18));
        return getSetuData(post);
     }
 
     public static List<SetuData> getSetuList(boolean r18, int count) {
         HttpPost post = new HttpPost(apiUrl);
-        post.setEntity(serializeHttpEntity(r18, count));
+        post.setEntity(HttpUtil.serializeHttpEntity(r18, count));
         return getSetuDataList(post);
     }
 
     public static SetuData getSetu(boolean r18, String... tags) {
         HttpPost post = new HttpPost(apiUrl);
         //post.setHeader("Content-Type","application/json;charset=utf-8");
-        post.setEntity(serializeHttpEntity(r18, tags));
+        post.setEntity(HttpUtil.serializeHttpEntity(r18, tags));
         return getSetuData(post);
     }
 
     public static SetuData getSetuData(HttpPost post) {
         CloseableHttpClient client = HttpClientBuilder.create().build();
 
-        CloseableHttpResponse response = null;
-        try {
-            response = client.execute(post);
-            client.close();
-            SetuResponse setuResponse = getSetuResponse(response);
-            return setuResponse.getData();
+            CloseableHttpResponse response;
+            try {
+                // 图床可能出现图片不存在，返回错误数据
+                while (true) {
+                    response = client.execute(post);
+                    SetuResponse setuResponse = getSetuResponse(response);
+                    if (setuResponse.getData() != null) {
+                        if (HttpUtil.checkImageExist(setuResponse.getData().getUrl())) {
+                            client.close();
+                            return setuResponse.getData();
+                        } else {
 
-        } catch (IOException e) {
-            Setu.INSTANCE.getLogger().error("[MiraiSetuPlugin] 调用API时出现错误!");
-            return null;
-        }
+                        }
+                    } else {
+                        client.close();
+                        return null;
+
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                Setu.INSTANCE.getLogger().error("[MiraiSetuPlugin] 调用API时出现错误!");
+                return null;
+            }
     }
 
     public static List<SetuData> getSetuDataList(HttpPost post) {
@@ -103,36 +123,13 @@ public class SetuUtil {
 
     public static SetuResponse getSetuResponse(CloseableHttpResponse response) throws IOException {
         HttpEntity resEntity = response.getEntity();
-        response.close();
         String rawResponse = EntityUtils.toString(resEntity);
         JSONObject jsonResponse = JSONObject.parseObject(rawResponse);
+        response.close();
 
         return jsonResponse.toJavaObject(SetuResponse.class);
     }
 
-    public static StringEntity serializeHttpEntity(boolean r18) {
-        JSONObject json = new JSONObject();
-        json.put("size", "regular");
-        json.put("r18", r18);
-        return new StringEntity(json.toJSONString(), ContentType.APPLICATION_JSON);
-    }
 
-    public static StringEntity serializeHttpEntity(boolean r18, int count) {
-        JSONObject json = new JSONObject();
-        json.put("size", "regular");
-        json.put("r18", r18);
-        json.put("num", count);
-        return new StringEntity(json.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    public static StringEntity serializeHttpEntity(boolean r18, String... tags) {
-        JSONObject json = new JSONObject();
-        JSONArray tagsJsonArray = new JSONArray();
-        tagsJsonArray.addAll(Arrays.stream(tags).collect(Collectors.toList()));
-        json.put("size", "regular");
-        json.put("tag", tagsJsonArray);
-        json.put("r18", r18);
-        return new StringEntity(json.toJSONString(), ContentType.APPLICATION_JSON);
-    }
 
 }

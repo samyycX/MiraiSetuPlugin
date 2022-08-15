@@ -11,6 +11,7 @@ import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.utils.BotConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,17 +55,10 @@ public final class Setu extends JavaPlugin {
     }
 
     public void test() {
-        String message = "色图";
-        if (message.startsWith("色图")) {
-
-            String[] split = message.split(" ");
-            SetuData data = null;
-            if (split.length > 1) {
-                String[] tags = Arrays.stream(split).skip(1).toArray(String[]::new);
-                data = SetuUtil.getSetu(true, tags);
-            } else {
-                data = SetuUtil.getSetu(true);
-            }
-        }
+        Bot bot = BotFactory.INSTANCE.newBot(2406668080L,"Samyyc0508", new BotConfiguration() {{
+            fileBasedDeviceInfo();
+        }});
+        bot.login();
+        System.out.println(SetuCache.getSetuCacheMessage(false, bot.getAsFriend()));
     }
 }

@@ -1,6 +1,7 @@
 package com.samyyc.setu.util;
 
 import com.samyyc.setu.cache.SetuCache;
+import com.samyyc.setu.config.GlobalConfig;
 import com.samyyc.setu.vo.SetuData;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.Image;
@@ -21,12 +22,17 @@ public class MessageUtil {
             if (SetuCache.isEnable()) {
                 return SetuCache.getSetuCacheMessage(r18, contact);
             } else {
-                return getSetuMessageFromApi(r18, contact, message);
+                return getSetuMessageFromApi(r18, contact);
             }
         }
     }
 
     public static Message getSetuMessageFromApi(boolean r18, Contact contact, String... tags) {
+        if (r18) {
+            if (!GlobalConfig.r18EnableMasterControl) {
+                return GlobalConfig.r18BannedMessage;
+            }
+        }
         SetuData data;
         if (tags.length > 0) {
             data = SetuUtil.getSetu(r18, tags);

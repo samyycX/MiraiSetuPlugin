@@ -5,6 +5,10 @@
 *.ipr
 *.iws
 
+#涩图
+*.jpg
+*.png
+
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin

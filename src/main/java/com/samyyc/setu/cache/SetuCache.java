@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.samyyc.setu.Setu;
 import com.samyyc.setu.config.CacheConfig;
-import com.samyyc.setu.util.ConfigUtil;
-import com.samyyc.setu.util.FileUtil;
-import com.samyyc.setu.util.MessageUtil;
-import com.samyyc.setu.util.SetuUtil;
+import com.samyyc.setu.config.GlobalConfig;
+import com.samyyc.setu.util.*;
 import com.samyyc.setu.vo.SetuData;
 import com.samyyc.setu.vo.SetuLocalCache;
 import net.mamoe.mirai.contact.Contact;
@@ -18,6 +16,12 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -67,6 +71,11 @@ public class SetuCache {
     }
 
     public static Message getSetuCacheMessage(boolean r18, Contact contact) {
+        if (r18) {
+            if (!GlobalConfig.r18EnableMasterControl) {
+                return GlobalConfig.r18BannedMessage;
+            }
+        }
         int maxCache = r18 ? config.getMaxR18SetuCache() : config.getMaxNormalSetuCache();
         JSONArray jsonData = r18 ? r18JsonData : normalJsonData;
         File dataFile = r18 ? r18DataFile : normalDataFile;
@@ -80,7 +89,6 @@ public class SetuCache {
                 throw new RuntimeException("缓存最大数必须是20的倍数");
             } else {
                 int times = maxCache / 20;
-                System.out.println(times);
                 cacheNewSetu(r18, times);
                 return MessageUtil.getSetuMessageFromApi(r18, contact);
             }
@@ -126,7 +134,7 @@ public class SetuCache {
                 for (SetuData data : setuDataList) {
                     j++;
                     File dir = r18 ? r18SetuDir : normalSetuDir;
-                    File file = getImageCacheFile(data, dir);
+                    File file = getImageCacheFile(data, dir, r18);
                     SetuLocalCache localCache = new SetuLocalCache(file, data);
                     if (!r18) {
                         normalJsonData.add(localCache);
@@ -162,11 +170,24 @@ public class SetuCache {
         });
     }
 
-    public static File getImageCacheFile(SetuData data, File dir) {
+    public static File getImageCacheFile(SetuData data, File dir, boolean r18) {
         File file = new File(dir, data.getPid()+"."+data.getExt());
         try {
             file.createNewFile();
-            FileUtils.copyURLToFile(new URL(data.getUrl()), file, 10000, 10000);
+            URL url = new URL(data.getUrl());
+
+            if (HttpUtil.checkImageExist(url.toString())) {
+                data = SetuUtil.getSetu(r18);
+                return SetuUtil.getImageFile(data);
+            }
+            ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            FileChannel fileChannel = fileOutputStream.getChannel();
+
+            fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+
+            fileOutputStream.close();
+            //FileUtils.copyURLToFile(new URL(data.getUrl()), file, 10000, 10000);
 
             return file;
         } catch (IOException e) {
