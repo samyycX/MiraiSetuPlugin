@@ -35,24 +35,8 @@ public class SetuUtil {
     }
 
     public static File getImageFile(SetuData data) {
-        if (data != null) {
-            try {
-                String url = data.getUrl();
-                File file = new File("../cache/temp." + data.getExt());
-                FileUtils.copyURLToFile(
-                        new URL(url),
-                        file,
-                        10000,
-                        10000
-                );
-                return file;
-            } catch (IOException e) {
-                // this should never happen :(
-                return null;
-            }
-        } else {
-            return null;
-        }
+        File file = new File("../cache/temp." + data.getExt());
+        return HttpUtil.getImageFile(file, data);
     }
 
     public static SetuData getSetu(boolean r18) {

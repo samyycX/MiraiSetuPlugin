@@ -2,6 +2,8 @@ package com.samyyc.setu.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.samyyc.setu.vo.SetuData;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
@@ -9,6 +11,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -52,6 +55,26 @@ public class HttpUtil {
 
         } catch (IOException e) {
             return true;
+        }
+    }
+
+    public static File getImageFile(File file, SetuData data) {
+        if (data != null) {
+            try {
+                String url = data.getUrl();
+                FileUtils.copyURLToFile(
+                        new URL(url),
+                        file,
+                        10000,
+                        10000
+                );
+                return file;
+            } catch (IOException e) {
+                // this should never happen :(
+                return null;
+            }
+        } else {
+            return null;
         }
     }
 

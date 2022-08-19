@@ -104,6 +104,10 @@ public class SetuCache {
             cacheNewSetu(r18, times);
         }
 
+        if (!localCache.getFile().exists()) {
+            return GlobalConfig.cacheFileNotFound;
+        }
+
         Image image = ExternalResource.uploadAsImage(localCache.getFile(), contact);
         System.out.println("成功从缓存读取图片: "+localCache.getData().getPid()+" R18: "+r18);
         localCache.getFile().delete();
@@ -178,7 +182,7 @@ public class SetuCache {
 
             if (HttpUtil.checkImageExist(url.toString())) {
                 data = SetuUtil.getSetu(r18);
-                return SetuUtil.getImageFile(data);
+                return HttpUtil.getImageFile(file, data);
             }
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
             FileOutputStream fileOutputStream = new FileOutputStream(file);
