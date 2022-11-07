@@ -2,12 +2,11 @@ plugins {
     val kotlinVersion = "1.6.21"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
-
-    id("net.mamoe.mirai-console") version "2.12.1"
+    id("net.mamoe.mirai-console") version "2.13.0"
 }
 
-group = "com.samyyc.setu"
-version = "1.0.0"
+group = "github.samyycx"
+version = "2.0"
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -15,6 +14,7 @@ configure<JavaPluginExtension> {
 }
 
 repositories {
+    maven("https://repo1.maven.org/maven2")
     maven("https://maven.aliyun.com/repository/public")
     mavenCentral()
 }
