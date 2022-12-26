@@ -2,7 +2,7 @@ package github.samyycx.miraisetu.fetcher.impl
 
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
-import github.samyycx.miraisetu.fetcher.SetuFetcher
+import github.samyycx.miraisetu.fetcher.Fetcher
 import github.samyycx.miraisetu.vo.SetuData
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
@@ -11,7 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 import java.util.*
 
-class LoliconAppFetcher : SetuFetcher {
+class LoliconAppFetcher : Fetcher {
 
     private val api = "https://api.lolicon.app/setu/v2"
     private val client = HttpClientBuilder.create().build()
