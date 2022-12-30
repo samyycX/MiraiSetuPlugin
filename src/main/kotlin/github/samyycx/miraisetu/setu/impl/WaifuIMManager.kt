@@ -22,7 +22,7 @@ class WaifuIMManager : ISetuManager {
     }
 
     override suspend fun getR18Setu(contact: Contact): MessageChain {
-        val data = fetcher.fetchDataWithTags(mutableListOf("r18"))
+        val data = fetcher.fetchDataWithTags(mutableListOf("nsfw","hentai"))
         return toMessage(data, contact)
     }
 

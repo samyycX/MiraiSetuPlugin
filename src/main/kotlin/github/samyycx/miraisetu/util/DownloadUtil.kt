@@ -34,11 +34,17 @@ object DownloadUtil {
         }
         val image: BufferedImage = ImageIO.read(file)
         val random = Random()
+        /**
         image.setRGB(0, 0, getRandomColor(random))
         image.setRGB(0,image.height-1, getRandomColor(random))
         image.setRGB(image.width-1, 0, getRandomColor(random))
         image.setRGB(image.width-1, image.height -1, getRandomColor(random))
+        **/
+        for (i in 1..10) {
+            image.setRGB(random.nextInt(image.width-1), random.nextInt(image.height-1), getRandomColor(random))
+        }
         ImageIO.write(image, "jpg", file)
+
         return file
     }
 

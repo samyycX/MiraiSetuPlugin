@@ -3,6 +3,7 @@ package github.samyycx.miraisetu.sender
 import github.samyycx.miraisetu.MiraiSetu
 import github.samyycx.miraisetu.setu.ISetuManager
 import github.samyycx.miraisetu.setu.impl.LoliconAppManager
+import github.samyycx.miraisetu.setu.impl.PurrbotManager
 import github.samyycx.miraisetu.setu.impl.WaifuIMManager
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.data.*
@@ -15,6 +16,7 @@ class MessageSender {
     val setuManagers = mutableMapOf<String, ISetuManager>().apply {
         put("loliconapp", LoliconAppManager())
         put("waifuim", WaifuIMManager())
+        put("purrbot", PurrbotManager())
     }
 
     suspend fun getSetuMessage(message: String, contact: Contact): MessageChain {
