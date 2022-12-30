@@ -21,12 +21,10 @@ interface Fetcher {
     fun fetchDataWithTags(tags: MutableList<String>): SetuData
     /**
      * 获取指定张普通色图
-     * 如果不支持请自行关闭缓存功能，我懒得写适配
      */
     fun fetchMultipleData(count: Int): List<SetuData>
 
     /** 获取指定张指定tag的色图
-     *  如果不支持请自行关闭缓存功能，我懒得写适配
      */
     fun fetchMultipleDataWithTags(count: Int, tags: MutableList<String>): List<SetuData>
 

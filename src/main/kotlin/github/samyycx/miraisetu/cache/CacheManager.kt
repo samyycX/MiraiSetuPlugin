@@ -1,12 +1,14 @@
 package github.samyycx.miraisetu.cache
 
 import github.samyycx.miraisetu.MiraiSetu
-import github.samyycx.miraisetu.vo.SetuData
+import github.samyycx.miraisetu.fetcher.impl.LoliconAppFetcher
+import java.awt.Color
 import java.io.File
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.*
 
 class CacheManager {
 
+    val fetcher = LoliconAppFetcher()
     val limit: Int = 100
 
     fun startCaching() {
@@ -16,7 +18,7 @@ class CacheManager {
                     val folder = File(MiraiSetu.dataFolder, "cache/normal")
                     val fileAmount = folder.listFiles()?.size ?: 0
                     if (fileAmount < limit) {
-                        val datas = MiraiSetu.fetcher.fetchMultipleData(limit - fileAmount)
+                        val datas = fetcher.fetchMultipleData(limit - fileAmount)
                         for (data in datas) {
                             Thread(CacheThread(data,"cache/normal")).start()
                         }
@@ -25,7 +27,7 @@ class CacheManager {
                     val r18Folder = File(MiraiSetu.dataFolder, "cache/r18")
                     val r18FileAmount = r18Folder.listFiles()?.size ?: 0
                     if (r18FileAmount < limit) {
-                        val datas = MiraiSetu.fetcher.fetchMultipleDataWithTags(limit - fileAmount, mutableListOf("r18"))
+                        val datas = fetcher.fetchMultipleDataWithTags(limit - fileAmount, mutableListOf("r18"))
                         for (data in datas) {
                             Thread(CacheThread(data,"cache/r18")).start()
                         }
@@ -46,7 +48,9 @@ class CacheManager {
 
             it.shuffle()
             return it[0]
+
         }
     }
+
 
 }
